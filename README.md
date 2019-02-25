@@ -1,6 +1,6 @@
 # Contract
 
-**TODO: Add description**
+[![Build Status](https://travis-ci.com/reconizer/contract.svg?branch=master)](https://travis-ci.com/reconizer/contract)
 
 ## Installation
 

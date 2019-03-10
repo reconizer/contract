@@ -7,7 +7,8 @@ defmodule Contract.MixProject do
       version: "0.1.0",
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      package: package()
     ]
   end
 
@@ -15,6 +16,16 @@ defmodule Contract.MixProject do
   def application do
     [
       extra_applications: [:logger]
+    ]
+  end
+
+  def package do
+    [
+      # These are the default files included in the package
+      files: ~w(lib priv .formatter.exs mix.exs README* readme* LICENSE*
+                license* CHANGELOG* changelog* src),
+      licenses: ["Apache 2.0"],
+      links: %{"GitHub" => "https://github.com/reconizer/contract"}
     ]
   end
 

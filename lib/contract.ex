@@ -133,8 +133,16 @@ defmodule Contract do
         {:ok, changeset |> Ecto.Changeset.apply_changes()}
 
       errors ->
-        {:error, errors}
+        {:error, errors |> resolve}
     end
+  end
+
+  defp resolve(changeset) do
+    Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
+      Enum.reduce(opts, msg, fn {key, value}, acc ->
+        String.replace(acc, "%{#{key}}", to_string(value))
+      end)
+    end)
   end
 
   defp validate_changeset({key, key_validations}, changeset) when is_list(key_validations) do

@@ -168,10 +168,23 @@ defmodule Contract do
     |> Ecto.Changeset.validate_confirmation(key, required: true)
   end
 
-  defp do_validate(changeset, key, fun) when is_function(fun) do
+  defp do_validate(changeset, key, fun) when is_function(fun, 1) do
     changeset
     |> Ecto.Changeset.validate_change(key, fn _, value ->
       fun.(value)
+      |> case do
+        true -> []
+        false -> [{key, "is invalid"}]
+        nil -> []
+        error -> [{key, error}]
+      end
+    end)
+  end
+
+  defp do_validate(changeset, key, fun) when is_function(fun, 2) do
+    changeset
+    |> Ecto.Changeset.validate_change(key, fn _, value ->
+      fun.(value, Ecto.Changeset.apply_changes(changeset))
       |> case do
         true -> []
         false -> [{key, "is invalid"}]

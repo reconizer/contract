@@ -98,6 +98,52 @@ defmodule ContractTest do
              |> Contract.validate(%{password: :confirmation})
   end
 
+  test "validate/2 with passing changeset" do
+    validator = fn password, changes ->
+      changes
+      |> Map.get(:password)
+      |> case do
+        nil ->
+          true
+
+        password ->
+          password == Map.get(changes, :password_confirmation)
+      end
+    end
+
+    params = %{}
+
+    assert {:ok, _} =
+             params
+             |> Contract.validate(%{
+               password: &validator.(&1, &2)
+             })
+
+    params = %{password: "testtest"}
+
+    assert {:error, _} =
+             params
+             |> Contract.validate(%{
+               password: &validator.(&1, &2)
+             })
+
+    params = %{password: "testtest", password_confirmation: "test"}
+
+    assert {:error, _} =
+             params
+             |> Contract.validate(%{
+               password: &validator.(&1, &2)
+             })
+
+    params = %{password: "testtest", password_confirmation: "testtest"}
+
+    assert {:ok, _} =
+             params
+             |> Contract.validate(%{
+               password: &validator.(&1, &2)
+             })
+  end
+
   test "validate/2 with atom keys" do
     params = %{foo: 2}
 

@@ -84,6 +84,20 @@ defmodule ContractTest do
     assert {:error, _} = params |> Contract.cast(%{test: :string})
   end
 
+  test "validate/2 confirmation" do
+    params = %{password: "testtest", password_confirmation: "testtest"}
+
+    assert {:ok, _} = params |> Contract.validate(%{password: :confirmation})
+
+    assert {:error, _} =
+             %{params | password_confirmation: nil}
+             |> Contract.validate(%{password: :confirmation})
+
+    assert {:error, _} =
+             %{password: "Test"}
+             |> Contract.validate(%{password: :confirmation})
+  end
+
   test "validate/2 with atom keys" do
     params = %{foo: 2}
 

@@ -163,6 +163,11 @@ defmodule Contract do
     |> Ecto.Changeset.validate_required(key)
   end
 
+  defp do_validate(changeset, key, :confirmation) do
+    changeset
+    |> Ecto.Changeset.validate_confirmation(key, required: true)
+  end
+
   defp do_validate(changeset, key, fun) when is_function(fun) do
     changeset
     |> Ecto.Changeset.validate_change(key, fn _, value ->

@@ -11,6 +11,37 @@ defmodule ContractTest do
     assert {:error, _} = params |> Contract.cast(%{bar: :string})
   end
 
+  test "cast/2 removes unknown parameters" do
+    params = %{"foo" => "Bar", "bar" => "baz", "test" => 1}
+
+    assert {:ok, casted_params} = params |> Contract.cast(%{foo: :string})
+
+    assert casted_params == %{foo: "Bar"}
+
+    params = %{foo: "Bar", bar: "baz", test: 1}
+    assert {:ok, casted_params} = params |> Contract.cast(%{foo: :string})
+
+    assert casted_params == %{foo: "Bar"}
+  end
+
+  test "cast/2 with unknown atom string" do
+    params = %{"some_non_existent_atom" => "bar", "bar" => 2, "test" => [1, 2, 3, 4]}
+
+    assert {:ok, %{bar: _, test: _}} =
+             params |> Contract.cast(%{foo: :string, bar: :integer, test: {:array, :integer}})
+
+    assert {:error, _} = params |> Contract.cast(%{bar: :string})
+  end
+
+  test "cast/2 with atoms" do
+    params = %{foo: "bar", test: [1, 2, 3]}
+
+    assert {:ok, %{foo: _, test: _}} =
+             params |> Contract.cast(%{foo: :string, test: {:array, :integer}})
+
+    assert {:error, _} = params |> Contract.cast(%{test: :string})
+  end
+
   test "plug/2" do
     params = %{some: "parameter", other: 123, test: [1, 2, 3, 4]}
 
@@ -64,24 +95,6 @@ defmodule ContractTest do
       )
 
     assert {:error, :is_invalid} == result
-  end
-
-  test "cast/2 with unknown atom string" do
-    params = %{"some_non_existent_atom" => "bar", "bar" => 2, "test" => [1, 2, 3, 4]}
-
-    assert {:ok, %{bar: _, test: _}} =
-             params |> Contract.cast(%{foo: :string, bar: :integer, test: {:array, :integer}})
-
-    assert {:error, _} = params |> Contract.cast(%{bar: :string})
-  end
-
-  test "cast/2 with atoms" do
-    params = %{foo: "bar", test: [1, 2, 3]}
-
-    assert {:ok, %{foo: _, test: _}} =
-             params |> Contract.cast(%{foo: :string, test: {:array, :integer}})
-
-    assert {:error, _} = params |> Contract.cast(%{test: :string})
   end
 
   test "validate/2 confirmation" do

@@ -83,16 +83,24 @@ defmodule Contract do
           {key, nil}
 
         {key, _value} when is_bitstring(key) ->
-          (key in type_keys)
+          key
+          |> string_to_atom
           |> case do
-            true ->
-              {key |> String.to_existing_atom(), nil}
-
-            false ->
-              nil
+            nil -> nil
+            key -> {key, nil}
           end
       end)
-      |> Enum.filter(& &1)
+      |> Enum.filter(fn
+        nil ->
+          nil
+
+        {key, _value} = param ->
+          (key in type_keys)
+          |> case do
+            true -> param
+            _ -> nil
+          end
+      end)
       |> Enum.into(%{})
 
     {initial, types}
@@ -196,5 +204,12 @@ defmodule Contract do
 
   defp do_validate(changeset, _, _) do
     changeset
+  end
+
+  defp string_to_atom(value) do
+    value
+    |> String.to_existing_atom()
+  rescue
+    _ -> nil
   end
 end

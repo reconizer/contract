@@ -10,7 +10,7 @@ by adding `contract` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:contract, "~> 0.2.3"}
+    {:contract, "~> 0.2.4"}
   ]
 end
 ```

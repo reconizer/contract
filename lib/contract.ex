@@ -14,9 +14,6 @@ defmodule Contract do
         params
         |> Map.get(plug_key, :undefined)
         |> case do
-          :undefined ->
-            {:ok, params}
-
           value ->
             plug_fun.(value)
             |> case do
@@ -29,9 +26,6 @@ defmodule Contract do
         params
         |> Map.get(plug_key, :undefined)
         |> case do
-          :undefined ->
-            {:ok, params}
-
           value ->
             plug_fun.(value, params)
             |> case do

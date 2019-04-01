@@ -97,6 +97,31 @@ defmodule ContractTest do
     assert {:error, :is_invalid} == result
   end
 
+  test "plug/2 without parameter present" do
+    params = %{}
+
+    result =
+      params
+      |> Contract.plug(%{
+        test: fn _ ->
+          {:ok, "test"}
+        end
+      })
+
+    assert {:ok, %{test: "test"}} == result
+    params = %{test: "value"}
+
+    result =
+      params
+      |> Contract.plug(%{
+        test1: fn _, params ->
+          {:ok, params.test}
+        end
+      })
+
+    assert {:ok, %{test1: "value", test: "value"}} == result
+  end
+
   test "validate/2 confirmation" do
     params = %{password: "testtest", password_confirmation: "testtest"}
 

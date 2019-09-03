@@ -42,6 +42,13 @@ defmodule ContractTest do
     assert {:error, _} = params |> Contract.cast(%{test: :string})
   end
 
+  test "cast/2 with some fields null" do
+    params = %{"foo" => "bar", "test" => "", "bar" => nil}
+
+    assert {:ok, %{foo: _, test: _, bar: _}} =
+    params |> Contract.cast(%{foo: :string, test: :string, bar: :integer})
+  end
+
   test "plug/2" do
     params = %{some: "parameter", other: 123, test: [1, 2, 3, 4]}
 
@@ -83,13 +90,13 @@ defmodule ContractTest do
     result =
       params
       |> Contract.plug(
-        some: fn value ->
+        some: fn _value ->
           {:error, :is_invalid}
         end,
         other: fn value ->
           {:ok, value + 1111}
         end,
-        test: fn value ->
+        test: fn _value ->
           {:ok, :is_also_invalid}
         end
       )
@@ -137,7 +144,7 @@ defmodule ContractTest do
   end
 
   test "validate/2 with passing changeset" do
-    validator = fn password, changes ->
+    validator = fn _password, changes ->
       changes
       |> Map.get(:password)
       |> case do

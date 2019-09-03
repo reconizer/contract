@@ -89,7 +89,7 @@ defmodule Contract do
           nil
 
         {key, _value} = param ->
-          (key in type_keys)
+          ("#{key}" in type_keys)
           |> case do
             true -> param
             _ -> nil

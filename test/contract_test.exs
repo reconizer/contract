@@ -235,4 +235,24 @@ defmodule ContractTest do
                end
              })
   end
+
+  test "cast and validate" do
+    params = %{
+      "foo" => 1,
+      "bar" => nil,
+      "baz" => ""
+    }
+
+    {:ok, result} = params
+    |> Contract.cast(%{
+      foo: :integer,
+      bar: :string,
+      baz: :string
+    })
+    |> Contract.validate(%{
+      foo: :required
+    })
+
+    assert %{foo: _, bar: _, baz: _} = result
+  end
 end

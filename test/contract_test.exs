@@ -11,6 +11,13 @@ defmodule ContractTest do
     assert {:error, _} = params |> Contract.cast(%{bar: :string})
   end
 
+  test "cast/2 with invalid array items" do
+    params = %{"foo" => "bar", "bar" => 2, "test" => [1, 2, "doobar", 4]}
+
+    assert {:error, %{test: ["is invalid"]}} =
+             params |> Contract.cast(%{foo: :string, bar: :integer, test: {:array, :integer}})
+  end
+
   test "cast/2 removes unknown parameters" do
     params = %{"foo" => "Bar", "bar" => "baz", "test" => 1}
 
@@ -46,7 +53,7 @@ defmodule ContractTest do
     params = %{"foo" => "bar", "test" => "", "bar" => nil}
 
     assert {:ok, %{foo: _, test: _, bar: _}} =
-    params |> Contract.cast(%{foo: :string, test: :string, bar: :integer})
+             params |> Contract.cast(%{foo: :string, test: :string, bar: :integer})
   end
 
   test "plug/2" do
@@ -243,15 +250,16 @@ defmodule ContractTest do
       "baz" => ""
     }
 
-    {:ok, result} = params
-    |> Contract.cast(%{
-      foo: :integer,
-      bar: :string,
-      baz: :string
-    })
-    |> Contract.validate(%{
-      foo: :required
-    })
+    {:ok, result} =
+      params
+      |> Contract.cast(%{
+        foo: :integer,
+        bar: :string,
+        baz: :string
+      })
+      |> Contract.validate(%{
+        foo: :required
+      })
 
     assert %{foo: _, bar: _, baz: _} = result
   end

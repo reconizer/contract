@@ -2,13 +2,18 @@ language: elixir
 elixir:
   - 1.10
   - 1.9
-  - 1.8
-  - 1.7
-  - 1.6
 otp_release:
-  - 20.3
   - 21.3
-  - 22
+  - 22.0
+
+jobs:
+  include:
+    - elixir: "1.6"
+      otp_release: "20.3"
+    - elixir: "1.7"
+      otp_release: "20.3"
+    - elixir: "1.8"
+      otp_release: "20.3"
 cache:
   directories:
     - _build

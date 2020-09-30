@@ -174,6 +174,31 @@ defmodule Contract do
     |> Ecto.Changeset.validate_confirmation(key, required: true)
   end
 
+  defp do_validate(changeset, key, {:min_length, value}) do
+    changeset
+    |> Ecto.Changeset.validate_length(key, min: value)
+  end
+
+  defp do_validate(changeset, key, {:max_length, value}) do
+    changeset
+    |> Ecto.Changeset.validate_length(key, max: value)
+  end
+
+  defp do_validate(changeset, key, {:equal_length, value}) do
+    changeset
+    |> Ecto.Changeset.validate_length(key, is: value)
+  end
+
+  defp do_validate(changeset, key, {:inclusion, list}) do
+    changeset
+    |> Ecto.Changeset.validate_inclusion(key, list)
+  end
+
+  defp do_validate(changeset, key, {:format, format}) do
+    changeset
+    |> Ecto.Changeset.validate_format(key, format)
+  end
+
   defp do_validate(changeset, key, fun) when is_function(fun, 1) do
     changeset
     |> Ecto.Changeset.validate_change(key, fn _, value ->

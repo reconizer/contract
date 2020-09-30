@@ -150,6 +150,57 @@ defmodule ContractTest do
              |> Contract.validate(%{password: :confirmation})
   end
 
+  test "validate/2 min_length" do
+    params = %{title: "min title"}
+
+    assert {:ok, _} = params |> Contract.validate(%{title: {:min_length, 3}})
+
+    assert {:error, _} =
+             %{params | title: "mi"}
+             |> Contract.validate(%{title: {:min_length, 3}})
+
+  end
+
+  test "validate/2 max_length" do
+    params = %{title: "max title is to long"}
+
+    assert {:ok, _} = params |> Contract.validate(%{title: {:max_length, 50}})
+
+    assert {:error, _} =
+             %{params | title: "max title is to long"}
+             |> Contract.validate(%{title: {:max_length, 8}})
+  end
+
+  test "validate/2 equal_length" do
+    params = %{title: "max"}
+
+    assert {:ok, _} = params |> Contract.validate(%{title: {:equal_length, 3}})
+
+    assert {:error, _} =
+             %{params | title: "max flow"}
+             |> Contract.validate(%{title: {:equal_length, 3}})
+  end
+
+  test "validate/2 inclusion" do
+    params = %{sex: "female"}
+
+    assert {:ok, _} = params |> Contract.validate(%{sex: {:inclusion, ["female", "male"]}})
+
+    assert {:error, _} =
+             %{params | sex: "qqq"}
+             |> Contract.validate(%{sex: {:inclusion, ["female", "male"]}})
+  end
+
+  test "validate/2 format" do
+    params = %{email: "frank@gmail.com"}
+
+    assert {:ok, _} = params |> Contract.validate(%{email: {:format, ~r/@/}})
+
+    assert {:error, _} =
+             %{params | email: "frank.gmail.com"}
+             |> Contract.validate(%{email: {:format, ~r/@/}})
+  end
+
   test "validate/2 with passing changeset" do
     validator = fn _password, changes ->
       changes

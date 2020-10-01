@@ -158,7 +158,6 @@ defmodule ContractTest do
     assert {:error, _} =
              %{params | title: "mi"}
              |> Contract.validate(%{title: {:min_length, 3}})
-
   end
 
   test "validate/2 max_length" do
@@ -189,6 +188,21 @@ defmodule ContractTest do
     assert {:error, _} =
              %{params | sex: "qqq"}
              |> Contract.validate(%{sex: {:inclusion, ["female", "male"]}})
+
+    params = %{value: "100", bar: "123"}
+
+    assert {:ok, _} =
+             params
+             |> Contract.cast(%{value: :integer})
+             |> Contract.validate(%{value: {:inclusion, 10..110}})
+
+    assert {:error, _} =
+             %{params | value: "111"}
+             |> Contract.cast(%{value: :integer, bar: :string})
+             |> Contract.validate(%{
+               bar: [:required, {:min_length, 10}],
+               value: {:inclusion, 10..110}
+             })
   end
 
   test "validate/2 format" do

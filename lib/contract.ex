@@ -142,6 +142,12 @@ defmodule Contract do
   defp resolve(changeset) do
     Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
       Enum.reduce(opts, msg, fn
+        {key, {:array, min..max}}, acc ->
+          String.replace(acc, "%{#{key}}", "#{to_string([min, max] |> Enum.join(" "))}[]")
+
+        {key, min..max}, acc ->
+          String.replace(acc, "%{#{key}}", to_string([min, max] |> Enum.join(" ")))
+
         {key, {:array, value}}, acc ->
           String.replace(acc, "%{#{key}}", "#{to_string(value)}[]")
 

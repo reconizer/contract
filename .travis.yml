@@ -6,6 +6,11 @@ otp_release:
   - "22.0.2"
   - "23.0"
 
+jobs:
+  exclude:
+    - elixir: "1.9"
+      otp_release: "23.0"
+
 cache:
   directories:
     - _build
